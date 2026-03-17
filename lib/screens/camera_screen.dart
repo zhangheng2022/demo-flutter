@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:camera/camera.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/camera_provider.dart';
+import '../providers/gallery_provider.dart';
 import '../utils/permissions.dart';
 
 class CameraScreen extends ConsumerStatefulWidget {
@@ -147,6 +148,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen> {
         .read(cameraControllerProvider.notifier)
         .takePicture();
     if (filePath != null && mounted) {
+      ref.invalidate(galleryPhotosProvider);
       _showPreview(filePath);
     }
   }

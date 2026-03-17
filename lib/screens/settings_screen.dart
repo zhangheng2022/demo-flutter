@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/theme_provider.dart';
+import '../providers/gallery_provider.dart';
 import '../utils/file_manager.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -52,7 +53,7 @@ class SettingsScreen extends ConsumerWidget {
                   title: const Text('清空所有照片'),
                   subtitle: const Text('删除所有已保存的照片'),
                   trailing: const Icon(Icons.delete),
-                  onTap: () => _showClearConfirmation(context),
+                  onTap: () => _showClearConfirmation(context, ref),
                 ),
                 const SizedBox(height: 32),
                 const Text(
@@ -72,7 +73,7 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  void _showClearConfirmation(BuildContext context) {
+  void _showClearConfirmation(BuildContext context, WidgetRef ref) {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -87,6 +88,8 @@ class SettingsScreen extends ConsumerWidget {
             onPressed: () async {
               await FileManager.clearAllPhotos();
               if (dialogContext.mounted) {
+                // ignore: unused_result
+                ref.refresh(galleryPhotosProvider);
                 Navigator.pop(dialogContext);
                 ScaffoldMessenger.of(dialogContext).showSnackBar(
                   const SnackBar(content: Text('所有照片已删除')),

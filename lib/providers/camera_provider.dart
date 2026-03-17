@@ -46,7 +46,6 @@ class CameraControllerNotifier extends StateNotifier<CameraController?> {
       final timestamp = DateTime.now().millisecondsSinceEpoch;
       final filePath = '${photoDir.path}/$timestamp.jpg';
 
-      await state!.takePicture();
       final xFile = await state!.takePicture();
       await xFile.saveTo(filePath);
 

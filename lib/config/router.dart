@@ -4,6 +4,8 @@ import '../screens/camera_screen.dart';
 import '../screens/gallery_screen.dart';
 import '../screens/settings_screen.dart';
 import '../screens/phone_capture_screen.dart';
+import '../screens/scanner_screen.dart';
+import '../screens/scan_results_screen.dart';
 
 final goRouter = GoRouter(
   initialLocation: '/',
@@ -21,6 +23,14 @@ final goRouter = GoRouter(
     GoRoute(
       path: '/phone-capture',
       builder: (context, state) => const PhoneCaptureScreen(),
+    ),
+    GoRoute(
+      path: '/scanner',
+      builder: (context, state) => const ScannerScreen(),
+    ),
+    GoRoute(
+      path: '/scan-results',
+      builder: (context, state) => const ScanResultsScreen(),
     ),
   ],
 );

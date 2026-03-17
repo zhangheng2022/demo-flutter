@@ -42,6 +42,20 @@ class HomeScreen extends ConsumerWidget {
             const SizedBox(height: 16),
             _buildNavButton(
               context,
+              label: '扫码',
+              icon: Icons.qr_code_2,
+              onPressed: () => context.push('/scanner'),
+            ),
+            const SizedBox(height: 16),
+            _buildNavButton(
+              context,
+              label: '扫码结果',
+              icon: Icons.list,
+              onPressed: () => context.push('/scan-results'),
+            ),
+            const SizedBox(height: 16),
+            _buildNavButton(
+              context,
               label: '相册',
               icon: Icons.photo_library,
               onPressed: () => context.push('/gallery'),

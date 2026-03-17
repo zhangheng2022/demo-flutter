@@ -25,12 +25,17 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
   bool _isFrontCamera = false;
   bool _isProcessing = false;
 
+  // 扫描框尺寸
+  static const double scanBoxWidth = 300;
+  static const double scanBoxHeight = 60;
+
   @override
   void initState() {
     super.initState();
     controller = MobileScannerController(
       facing: CameraFacing.back,
       torchEnabled: false,
+      detectionTimeoutMs: 1000,
     );
   }
 
@@ -41,33 +46,46 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
   }
 
   void _handleBarcode(BarcodeCapture capture) {
-    // 防止重复处理
     if (_isProcessing) return;
 
     final List<Barcode> barcodes = capture.barcodes;
     for (final barcode in barcodes) {
       final String? code = barcode.rawValue;
-      if (code != null) {
+
+      // 只处理条形码格式（1D码）
+      if (code != null && _isBarcodeFormat(barcode.format)) {
         _isProcessing = true;
 
-        ref.read(scannerProvider.notifier).addScanResult(
-          code,
-          format: barcode.format.name,
-        );
+        ref
+            .read(scannerProvider.notifier)
+            .addScanResult(code, format: barcode.format.name);
 
         widget.onScanComplete?.call(code);
 
         if (widget.autoClose && mounted) {
-          // 使用 Future.microtask 延迟导航，避免在 build 过程中修改状态
           Future.microtask(() {
             if (mounted) {
               Navigator.pop(context, code);
             }
           });
         }
-        break; // 只处理第一个条码
+        break;
       }
     }
+  }
+
+  /// 判断是否为条形码格式（1D码）
+  bool _isBarcodeFormat(BarcodeFormat format) {
+    final barcodeFormats = [
+      BarcodeFormat.code128,
+      BarcodeFormat.code39,
+      BarcodeFormat.code93,
+      BarcodeFormat.codabar,
+      BarcodeFormat.ean13,
+      BarcodeFormat.ean8,
+      BarcodeFormat.itf,
+    ];
+    return barcodeFormats.contains(format);
   }
 
   Future<void> _toggleFlash() async {
@@ -86,9 +104,12 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final scanBoxTop = (screenSize.height - scanBoxHeight) / 2;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title ?? '扫描二维码'),
+        title: Text(widget.title ?? '扫描条形码'),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -114,73 +135,107 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
               );
             },
           ),
-          // 扫描框
-          Center(
+          // 半透明遮罩层 - 上方
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: scanBoxTop,
+            child: Container(color: Colors.black.withValues(alpha: 1)),
+          ),
+          // 半透明遮罩层 - 下方
+          Positioned(
+            top: scanBoxTop + scanBoxHeight,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(color: Colors.black.withValues(alpha: 1)),
+          ),
+          // 半透明遮罩层 - 左方
+          Positioned(
+            top: scanBoxTop,
+            left: 0,
+            width: (screenSize.width - scanBoxWidth) / 2,
+            height: scanBoxHeight,
+            child: Container(color: Colors.black.withValues(alpha: 1)),
+          ),
+          // 半透明遮罩层 - 右方
+          Positioned(
+            top: scanBoxTop,
+            right: 0,
+            width: (screenSize.width - scanBoxWidth) / 2,
+            height: scanBoxHeight,
+            child: Container(color: Colors.black.withValues(alpha: 1)),
+          ),
+          // 扫描框 - 300x60 的条形码扫描框
+          Positioned(
+            top: scanBoxTop,
+            left: (screenSize.width - scanBoxWidth) / 2,
+            width: scanBoxWidth,
+            height: scanBoxHeight,
             child: Container(
-              width: 280,
-              height: 280,
               decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.green,
-                  width: 3,
-                ),
-                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.green, width: 2),
+                borderRadius: BorderRadius.circular(8),
               ),
               child: Stack(
                 children: [
-                  // 四个角
+                  // 左上角
                   Positioned(
                     top: 0,
                     left: 0,
                     child: Container(
-                      width: 30,
-                      height: 30,
-                      decoration: BoxDecoration(
+                      width: 20,
+                      height: 20,
+                      decoration: const BoxDecoration(
                         border: Border(
-                          top: BorderSide(color: Colors.green, width: 4),
-                          left: BorderSide(color: Colors.green, width: 4),
+                          top: BorderSide(color: Colors.green, width: 3),
+                          left: BorderSide(color: Colors.green, width: 3),
                         ),
                       ),
                     ),
                   ),
+                  // 右上角
                   Positioned(
                     top: 0,
                     right: 0,
                     child: Container(
-                      width: 30,
-                      height: 30,
-                      decoration: BoxDecoration(
+                      width: 20,
+                      height: 20,
+                      decoration: const BoxDecoration(
                         border: Border(
-                          top: BorderSide(color: Colors.green, width: 4),
-                          right: BorderSide(color: Colors.green, width: 4),
+                          top: BorderSide(color: Colors.green, width: 3),
+                          right: BorderSide(color: Colors.green, width: 3),
                         ),
                       ),
                     ),
                   ),
+                  // 左下角
                   Positioned(
                     bottom: 0,
                     left: 0,
                     child: Container(
-                      width: 30,
-                      height: 30,
-                      decoration: BoxDecoration(
+                      width: 20,
+                      height: 20,
+                      decoration: const BoxDecoration(
                         border: Border(
-                          bottom: BorderSide(color: Colors.green, width: 4),
-                          left: BorderSide(color: Colors.green, width: 4),
+                          bottom: BorderSide(color: Colors.green, width: 3),
+                          left: BorderSide(color: Colors.green, width: 3),
                         ),
                       ),
                     ),
                   ),
+                  // 右下角
                   Positioned(
                     bottom: 0,
                     right: 0,
                     child: Container(
-                      width: 30,
-                      height: 30,
-                      decoration: BoxDecoration(
+                      width: 20,
+                      height: 20,
+                      decoration: const BoxDecoration(
                         border: Border(
-                          bottom: BorderSide(color: Colors.green, width: 4),
-                          right: BorderSide(color: Colors.green, width: 4),
+                          bottom: BorderSide(color: Colors.green, width: 3),
+                          right: BorderSide(color: Colors.green, width: 3),
                         ),
                       ),
                     ),
@@ -196,7 +251,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
             right: 0,
             child: Center(
               child: Text(
-                '将二维码放入框内',
+                '将条形码放入框内',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,

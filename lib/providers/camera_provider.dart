@@ -32,6 +32,18 @@ class CameraControllerNotifier extends StateNotifier<CameraController?> {
     state = controller;
   }
 
+  Future<void> setZoomLevel(double zoom) async {
+    if (state == null) return;
+    try {
+      final maxZoom = await state!.getMaxZoomLevel();
+      final minZoom = await state!.getMinZoomLevel();
+      final clampedZoom = zoom.clamp(minZoom, maxZoom);
+      await state!.setZoomLevel(clampedZoom);
+    } catch (e) {
+      debugPrint('Error setting zoom: $e');
+    }
+  }
+
   Future<String?> takePicture() async {
     if (state == null) return null;
 

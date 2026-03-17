@@ -54,7 +54,7 @@ class PhoneCaptureNotifier extends StateNotifier<PhoneCaptureSession?> {
   }
 
   /// 更新指定部位的拍照
-  void updatePhotoForSide(PhoneSide side, String filePath) {
+  void updatePhotoForSide(PhoneSide side, String? filePath) {
     if (state == null) return;
 
     final updatedPhotos = Map<PhoneSide, String?>.from(state!.capturedPhotos);

@@ -30,6 +30,12 @@ final phoneSideInfoProvider = Provider<Map<PhoneSide, PhoneSideInfo>>((ref) {
       description: '请对准手机右侧边框，确保整个侧面在框内',
       imagePath: 'assets/phone_right.png',
     ),
+    PhoneSide.bottom: const PhoneSideInfo(
+      side: PhoneSide.bottom,
+      label: '底部',
+      description: '请对准手机底部，确保整个底部在框内',
+      imagePath: 'assets/phone_bottom.png',
+    ),
   };
 });
 
@@ -47,6 +53,7 @@ class PhoneCaptureNotifier extends StateNotifier<PhoneCaptureSession?> {
         PhoneSide.back: null,
         PhoneSide.left: null,
         PhoneSide.right: null,
+        PhoneSide.bottom: null,
       },
       currentStep: PhoneSide.front,
       isCompleted: false,

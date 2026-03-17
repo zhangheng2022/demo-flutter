@@ -93,6 +93,8 @@ class CaptureStepIndicator extends StatelessWidget {
         return '左侧';
       case PhoneSide.right:
         return '右侧';
+      case PhoneSide.bottom:
+        return '底部';
     }
   }
 }

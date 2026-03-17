@@ -1,9 +1,10 @@
 /// 手机部位枚举
 enum PhoneSide {
-  front,  // 正面
-  back,   // 背面
-  left,   // 左侧面
-  right,  // 右侧面
+  front,   // 正面
+  back,    // 背面
+  left,    // 左侧面
+  right,   // 右侧面
+  bottom,  // 底部
 }
 
 /// 手机部位信息

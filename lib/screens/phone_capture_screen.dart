@@ -125,13 +125,14 @@ class _PhoneCaptureScreenState extends ConsumerState<PhoneCaptureScreen> {
                               height: 80,
                               child: ListView.builder(
                                 scrollDirection: Axis.horizontal,
-                                itemCount: 4,
+                                itemCount: 5,
                                 itemBuilder: (context, index) {
                                   final sides = [
                                     PhoneSide.front,
                                     PhoneSide.back,
                                     PhoneSide.left,
                                     PhoneSide.right,
+                                    PhoneSide.bottom,
                                   ];
                                   final side = sides[index];
                                   final photoPath =

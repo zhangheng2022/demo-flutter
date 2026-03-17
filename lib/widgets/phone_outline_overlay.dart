@@ -61,6 +61,10 @@ class PhoneOutlinePainter extends CustomPainter {
       case PhoneSide.right:
         _drawRightView(canvas, rect, rrect, phoneWidth, phoneHeight);
         break;
+
+      case PhoneSide.bottom:
+        _drawBottomView(canvas, rect, rrect, phoneWidth, phoneHeight);
+        break;
     }
   }
 
@@ -189,6 +193,110 @@ class PhoneOutlinePainter extends CustomPainter {
 
     // 绘制右侧细节
     _drawRightSideDetails(canvas, sideRect, sideWidth, sideHeight);
+  }
+
+  void _drawBottomView(
+    Canvas canvas,
+    Rect rect,
+    RRect rrect,
+    double phoneWidth,
+    double phoneHeight,
+  ) {
+    // 底部视图：从下方看手机
+    // 绘制底部轮廓（更窄的矩形）
+    final bottomHeight = phoneHeight * 0.15;
+    final bottomWidth = phoneWidth;
+    final bottomLeft = rect.left;
+    final bottomTop = rect.center.dy - bottomHeight / 2;
+
+    final bottomRect = Rect.fromLTWH(bottomLeft, bottomTop, bottomWidth, bottomHeight);
+    final bottomRRect = RRect.fromRectAndRadius(bottomRect, Radius.circular(40.0));
+
+    // 绘制底部轮廓
+    final mainOutlinePaint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.9)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 4;
+    canvas.drawRRect(bottomRRect, mainOutlinePaint);
+
+    // 绘制手机轮廓阴影
+    final shadowPaint = Paint()
+      ..color = Colors.black.withValues(alpha: 0.3)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 6;
+    canvas.drawRRect(bottomRRect, shadowPaint);
+
+    // 绘制底部细节
+    _drawBottomDetails(canvas, bottomRect, bottomWidth, bottomHeight);
+  }
+
+  void _drawBottomDetails(
+    Canvas canvas,
+    Rect rect,
+    double phoneWidth,
+    double phoneHeight,
+  ) {
+    // 绘制底部扬声器孔
+    final speakerPaint = Paint()
+      ..color = const Color(0xFF222222)
+      ..style = PaintingStyle.fill;
+
+    final speakerWidth = phoneWidth * 0.25;
+    final speakerHeight = phoneHeight * 0.15;
+    final speakerLeft = rect.center.dx - speakerWidth / 2;
+    final speakerTop = rect.center.dy - speakerHeight / 2;
+
+    final speakerRect = Rect.fromLTWH(
+      speakerLeft,
+      speakerTop,
+      speakerWidth,
+      speakerHeight,
+    );
+    final speakerRRect = RRect.fromRectAndRadius(
+      speakerRect,
+      Radius.circular(speakerHeight / 2),
+    );
+
+    canvas.drawRRect(speakerRRect, speakerPaint);
+
+    // 绘制充电口
+    final chargingPaint = Paint()
+      ..color = const Color(0xFF1a1a1a)
+      ..style = PaintingStyle.fill;
+
+    final chargingWidth = phoneWidth * 0.15;
+    final chargingHeight = phoneHeight * 0.25;
+    final chargingLeft = rect.center.dx - chargingWidth / 2;
+    final chargingTop = rect.center.dy - chargingHeight / 2;
+
+    final chargingRect = Rect.fromLTWH(
+      chargingLeft,
+      chargingTop,
+      chargingWidth,
+      chargingHeight,
+    );
+    final chargingRRect = RRect.fromRectAndRadius(
+      chargingRect,
+      Radius.circular(4),
+    );
+
+    canvas.drawRRect(chargingRRect, chargingPaint);
+
+    // 绘制充电口边框
+    final chargingBorderPaint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.3)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1;
+
+    canvas.drawRRect(chargingRRect, chargingBorderPaint);
+
+    // 绘制底部边框线
+    final edgePaint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.3)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1;
+
+    canvas.drawRect(rect, edgePaint);
   }
 
   void _drawScreenBorder(

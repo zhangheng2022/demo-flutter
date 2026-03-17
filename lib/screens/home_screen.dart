@@ -35,6 +35,13 @@ class HomeScreen extends ConsumerWidget {
             const SizedBox(height: 16),
             _buildNavButton(
               context,
+              label: '手机轮廓拍照',
+              icon: Icons.phone_android,
+              onPressed: () => context.push('/phone-capture'),
+            ),
+            const SizedBox(height: 16),
+            _buildNavButton(
+              context,
               label: '相册',
               icon: Icons.photo_library,
               onPressed: () => context.push('/gallery'),

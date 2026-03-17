@@ -3,6 +3,7 @@ import '../screens/home_screen.dart';
 import '../screens/camera_screen.dart';
 import '../screens/gallery_screen.dart';
 import '../screens/settings_screen.dart';
+import '../screens/phone_capture_screen.dart';
 
 final goRouter = GoRouter(
   initialLocation: '/',
@@ -16,6 +17,10 @@ final goRouter = GoRouter(
     GoRoute(
       path: '/settings',
       builder: (context, state) => const SettingsScreen(),
+    ),
+    GoRoute(
+      path: '/phone-capture',
+      builder: (context, state) => const PhoneCaptureScreen(),
     ),
   ],
 );
